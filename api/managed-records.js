@@ -21,16 +21,11 @@ const primaryColor = {
     yellow: true,
 };
 // Your retrieve function plus any additional functions go here ...
-
 function constructURL(colors = [], offset) {
-    let url = URI(window.path).addSearch('color[]', colors).addSearch('offset', offset).addSearch('limit', 10);
-    return url;
-}
-function updateOffset(oldOffset, newOffset, url) {
-    console.log(url);
-    url = url.removeSearch('offset', oldOffset);
-    url = url.addSearch('offset', newOffset);
-    console.log(url);
+    let url = URI(window.path)
+        .addSearch('color[]', colors)
+        .addSearch('offset', offset * 10)
+        .addSearch('limit', 10);
     return url;
 }
 
@@ -49,8 +44,7 @@ function retrieveAllRecords(colors, offset) {
     return fetchPage(url)
         .then(async (resData) => {
             if (resData.length) {
-                let endID = resData[resData.length - 1].id;
-                let next = await retrieveAllRecords(colors, endID);
+                let next = await retrieveAllRecords(colors, offset + 1);
                 resData = resData.concat(next);
             }
             return resData;
